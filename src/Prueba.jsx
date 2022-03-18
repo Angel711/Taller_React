@@ -1,15 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function Prueba(props){
-    const [name, setName] = useState(props.name);
-        return (
-            <>
-                <h1> Pokemon: {name} </h1>
-                <button onClick={() => {
-                    setName('Piplup');
-                    }}>Cambiar nombre</button>
-            </>
-        );
+function Pokemon(props){
+    const [pokemon, setPokemon] = useState([props.atributes]);
+
 }
 
-export default Prueba;
+export default Pokemon;

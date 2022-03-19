@@ -1,156 +1,79 @@
-import './App.css';
-import Pokemon from './Prueba.jsx';
-import React, {useEffect, useState} from 'react';
-import { Button } from 'react-bootstrap';
-let pokemonLista = [
-  {
-      "abilities":[
-          {
-              "name":"limber"
-          },
-          {
-              "name":"imposter"
-          }
-      ],
-      "base_experience":101,
-      "height":3,
-      "id":132,
-      "name":"ditto",
-      "weight": 40,
-      "types":[
-          {
-              "name":"normal"
-          }
-      ]
-  },
-  {
-      "abilities":[
-          {
-              "name":"overgrow"
-          },
-          {
-              "name":"chlorophyll"
-          }
-      ],
-      "base_experience":64,
-      "height":7,
-      "id":132,
-      "name":"bulbasaur",
-      "weight": 69,
-      "types":[
-          {
-              "name":"grass"
-          },
-          {
-              "name":"poison"
-          }
-      ]
-  },
-  {
-      "abilities":[
-          {
-              "name":"blaze"
-          },
-          {
-              "name":"solar-power"
-          }
-      ],
-      "base_experience":62,
-      "height":6,
-      "id":4,
-      "name":"charmander",
-      "weight": 85,
-      "types":[
-          {
-              "name":"fire"
-          }
-      ]
-  },
-  {
-      "abilities":[
-          {
-              "name":"run-away"
-          },
-          {
-              "name":"guts"
-          },
-    {
-              "name":"hustle"
-          }
-      ],
-      "base_experience":62,
-      "height":7,
-      "id":20,
-      "name":"raticate",
-      "weight": 185,
-      "types":[
-          {
-              "name":"normal"
-          }
-      ]
-  },
-{
-      "abilities":[
-          {
-              "name":"shield-dust"
-          },
-          {
-              "name":"run-away"
-          }
-      ],
-      "base_experience":39,
-      "height":3,
-      "id":10,
-      "name":"caterpie",
-      "weight": 29,
-      "types":[
-          {
-              "name":"bug"
-          }
-      ]
-  },
-{
-      "abilities":[
-          {
-              "name":"swarm"
-          },
-          {
-              "name":"sniper"
-          }
-      ],
-      "base_experience":178,
-      "height":10,
-      "id":15,
-      "name":"beedrill",
-      "weight": 295,
-      "types":[
-          {
-              "name":"bug"
-          },
-    {
-              "name":"poison"
-          }
-      ]
-  }
-
-]
+import User from "./Prueba.jsx";
+import { Container, Button, Row, Col, Form } from "react-bootstrap";
+import "./App.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const [pokemon, setPokemon] = useState([pokemonLista]);
-  return(
-    <>
-    <h1>Pokemon</h1>
-      {
-        pokemon.map((pokemon,index) => (
-          <p key={index}>{pokemon}</p>
-        ))
-      }
-      <button onClick={()=>{
-        let nuevoPokemon = prompt("Ingrese el nombre del pokemon");
-        
-      }}>Agregar Pokemon</button> 
-    </>
-  )
+    const [users, setUsers] = useState([]);
+    const [backupUsers, setBackupUsers] = useState([]);
+
+    useEffect(() => {
+        try {
+            let fetchUsers = async function () {
+                const response = await axios.get(
+                    "https://reqres.in/api/users?per_page=12"
+                );
+                console.log(response.data.data);
+                setUsers(response.data.data);
+                setBackupUsers(response.data.data);
+            };
+        fetchUsers();
+        } catch (err) {
+            console.log(err);
+        }
+    }, []);
+    const buscarUsuario = function (event){
+        let usersArray = [...backupUsers];
+        console.log(event.target.value);
+        usersArray = usersArray.filter((user) => {
+            let fullName = `${user.first_name} ${user.last_name}`;
+            return fullName.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
+        });
+        /* console.log(usersArray); */
+        setUsers(usersArray);
+    };
+    return (
+    <Container className="mt-5">
+        <Form>
+            <Row>
+                <Col xs={2} className="d-flex justify-content-end">
+                    <Form.Label>Buscar un usuario</Form.Label>
+                </Col>
+                <Col xs={10}>
+                    <Form.Control type="text" 
+                    placeholder="Ingresa el nombre de usuario"
+                    onChange={buscarUsuario}/>
+                </Col>
+            </Row>
+        </Form>
+        <Row>
+            <Col>
+                <Form>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" placeholder="Enter email" />
+                        <Form.Text className="text-muted">
+                            We'll never share your email with anyone else.
+                        </Form.Text>
+                    </Form.Group>
+                    <Button variant="primary" type="submit">
+                        Submit
+                    </Button>
+                </Form>
+            </Col>
+        </Row>
+        <Row>
+            <Col>
+                <div className="pokemon-container m-5">
+                    {users.map((user) => {
+                    return <User key={user.id} user={user} />;
+                    })}
+                </div>
+            </Col>
+        </Row>
+    </Container>
+    );
 }
 
 export default App;

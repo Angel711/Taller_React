@@ -1,79 +1,68 @@
-import User from "./Prueba.jsx";
-import { Container, Button, Row, Col, Form } from "react-bootstrap";
+import Pokemon from "./components/User";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import "./App.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 function App() {
-    const [users, setUsers] = useState([]);
-    const [backupUsers, setBackupUsers] = useState([]);
+  const [pokemons, setPokemons] = useState([]);
+  const [backUpPokemon, setBackUpPokemon] = useState([]);
+  //Load the pokemons from the API
+  useEffect(() => {
+    try {
+      let fetchPokemon = async function () {
+        const response = await axios.get(
+          "https://pokeapi.co/api/v2/pokemon?limit=20"
+        );
+        console.log(response.data.results);
+        setPokemons(response.data.results);
+        setBackUpPokemon(response.data.results);
+      };
+      fetchPokemon();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+  
 
-    useEffect(() => {
-        try {
-            let fetchUsers = async function () {
-                const response = await axios.get(
-                    "https://reqres.in/api/users?per_page=12"
-                );
-                console.log(response.data.data);
-                setUsers(response.data.data);
-                setBackupUsers(response.data.data);
-            };
-        fetchUsers();
-        } catch (err) {
-            console.log(err);
-        }
-    }, []);
-    const buscarUsuario = function (event){
-        let usersArray = [...backupUsers];
-        console.log(event.target.value);
-        usersArray = usersArray.filter((user) => {
-            let fullName = `${user.first_name} ${user.last_name}`;
-            return fullName.toLowerCase().search(event.target.value.toLowerCase()) !== -1;
-        });
-        /* console.log(usersArray); */
-        setUsers(usersArray);
-    };
-    return (
+  const buscarPokemon = function (event) {
+    let pokemonArray = [...backUpPokemon];
+    pokemonArray = pokemonArray.filter((pokemon) => {
+      let full_name = `${pokemon.name}`;
+      return (
+        full_name.toLowerCase().search(event.target.value.toLowerCase()) !== -1
+      );
+    });
+    setPokemons(pokemonArray);
+  };
+
+  return (
     <Container className="mt-5">
-        <Form>
-            <Row>
-                <Col xs={2} className="d-flex justify-content-end">
-                    <Form.Label>Buscar un usuario</Form.Label>
-                </Col>
-                <Col xs={10}>
-                    <Form.Control type="text" 
-                    placeholder="Ingresa el nombre de usuario"
-                    onChange={buscarUsuario}/>
-                </Col>
-            </Row>
-        </Form>
+      <Form>
         <Row>
-            <Col>
-                <Form>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" />
-                        <Form.Text className="text-muted">
-                            We'll never share your email with anyone else.
-                        </Form.Text>
-                    </Form.Group>
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
-                </Form>
-            </Col>
+          <Col xs={2} className="d-flex justify-content-end">
+            <Form.Label className=".col-form-label-lg">Buscar un Pokemon:</Form.Label>
+          </Col>
+          <Col xs={10}>
+            <Form.Control
+              type="text"
+              placeholder="Ingresa el nombre"
+              onChange={buscarPokemon}
+            />
+          </Col>
         </Row>
-        <Row>
-            <Col>
-                <div className="pokemon-container m-5">
-                    {users.map((user) => {
-                    return <User key={user.id} user={user} />;
-                    })}
-                </div>
-            </Col>
-        </Row>
+      </Form>
+      <Row>
+        <Col>
+          <div className="pokemon-container m-5">
+            {pokemons.map((pokemon) => {
+              return <Pokemon key={pokemon.id} pokemon={pokemon} />;
+            })}
+          </div>
+        </Col>
+      </Row>
     </Container>
-    );
+  );
 }
 
 export default App;

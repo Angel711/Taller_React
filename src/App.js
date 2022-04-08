@@ -1,65 +1,72 @@
-import Pokemon from "./components/User";
+import Pokemon from "./components/Pokemon";
 import { Container, Row, Col, Form } from "react-bootstrap";
+import ShowModal from "./components/Modal";
 import "./App.css";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useCallback } from "react";
+import axios from "./utils/axios";
+import Router from "./router/Router";
 
 function App() {
   const [pokemons, setPokemons] = useState([]);
-  const [backUpPokemon, setBackUpPokemon] = useState([]);
-  //Load the pokemons from the API
+  const [backUpPokemons, setBackUpPokemons] = useState([]);
+
+  const fetchPokemons = useCallback(async () => {
+    const response = await axios.get("/pokemons");
+    setPokemons(response.data);
+    setBackUpPokemons(response.data);
+  }, []);
+
   useEffect(() => {
     try {
-      let fetchPokemon = async function () {
-        const response = await axios.get(
-          "https://pokeapi.co/api/v2/pokemon?limit=20"
-        );
-        console.log(response.data.results);
-        setPokemons(response.data.results);
-        setBackUpPokemon(response.data.results);
-      };
-      fetchPokemon();
+      fetchPokemons();
     } catch (err) {
       console.log(err);
     }
-  }, []);
-  
+  }, [fetchPokemons]);
 
   const buscarPokemon = function (event) {
-    let pokemonArray = [...backUpPokemon];
-    pokemonArray = pokemonArray.filter((pokemon) => {
-      let full_name = `${pokemon.name}`;
+    let pokemonsArray = [...backUpPokemons];
+    pokemonsArray = pokemonsArray.filter((user) => {
       return (
-        full_name.toLowerCase().search(event.target.value.toLowerCase()) !== -1
+        user.name.toLowerCase().search(event.target.value.toLowerCase()) !== -1
       );
     });
-    setPokemons(pokemonArray);
+    setPokemons(pokemonsArray);
   };
 
   return (
     <Container className="mt-5">
       <Form>
         <Row>
-          <Col xs={2} className="d-flex justify-content-end">
-            <Form.Label className=".col-form-label-lg">Buscar un Pokemon:</Form.Label>
+          <Col xs={2} className="d-flex justify-content-end white-text">
+            <Form.Label>Buscar un Pokemon:</Form.Label>
           </Col>
-          <Col xs={10}>
+          <Col xs={8}>
             <Form.Control
               type="text"
               placeholder="Ingresa el nombre"
               onChange={buscarPokemon}
             />
           </Col>
+          <Col xs={2}>
+            <ShowModal type={"create"} fetchPokemons={fetchPokemons} />
+          </Col>
         </Row>
       </Form>
       <Row>
-        <Col>
-          <div className="pokemon-container m-5">
-            {pokemons.map((pokemon) => {
-              return <Pokemon key={pokemon.id} pokemon={pokemon} />;
-            })}
-          </div>
-        </Col>
+        <div className="pokemon-container m-5">
+          {pokemons.map((pokemon) => {
+            return (
+              <Col>
+                <Pokemon
+                  key={pokemon.id}
+                  pokemon={pokemon}
+                  fetchPokemons={fetchPokemons}
+                />
+              </Col>
+            );
+          })}
+        </div>
       </Row>
     </Container>
   );

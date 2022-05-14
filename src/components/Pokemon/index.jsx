@@ -13,34 +13,34 @@ function Pokemon({ pokemon }) {
   };
 
   return (
-    <Card>
-      <Card.Body className={`${styles.card} m-5 text-center`}>
-        <p>
-          <strong>Name: </strong>
-          {`${pokemon.name}`}
-        </p>
-        <p>
-          <strong>Base Experience: </strong>
-          {`${pokemon.base_experience}`}
-        </p>
-        <p>
-          <strong>Height: </strong> {`${pokemon.height}`}
-        </p>
-        <p>
-          <strong>Weight: </strong> {`${pokemon.weight}`}
-        </p>
-        <div className={`mb-5 ${styles.pokemonImg}`}>
-          <img src={pokemon.sprite} alt="pokemon-img" />
-        </div>
-        <div className={`${styles.actionsContainer}`}>
-          <NavLink to={`/actualizar/${pokemon.id}`} className="btn btn-primary">
-            Actualizar
-          </NavLink>
-          <Button variant="danger" onClick={deletePokemon}>
-            Eliminar
-          </Button>
-        </div>
-      </Card.Body>
+    <Card bg="danger" text="white">
+        <Card.Body className={`${styles.card} m-5 text-center`}>
+          <p>
+            <strong>Name: </strong>
+            {`${pokemon.name}`}
+          </p>
+          <p>
+            <strong>Base Experience: </strong>
+            {`${pokemon.base_experience}`}
+          </p>
+          <p>
+            <strong>Height: </strong> {`${pokemon.height}`}
+          </p>
+          <p>
+            <strong>Weight: </strong> {`${pokemon.weight}`}
+          </p>
+          <div className={`mb-5 ${styles.pokemonImg}`}>
+            <img src={pokemon.sprite} alt="pokemon-img" />
+          </div>
+          <div className={`${styles.actionsContainer}`}>
+            <NavLink to={`/actualizar/${pokemon.id}`} className="btn btn-warning">
+              Actualizar
+            </NavLink>
+            <Button variant="secondary" onClick={deletePokemon}>
+              Eliminar
+            </Button>
+          </div>
+        </Card.Body>
     </Card>
   );
 }

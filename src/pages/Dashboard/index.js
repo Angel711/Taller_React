@@ -30,9 +30,9 @@ function App() {
   return (
     <>
       <Container className="mt-5">
-        <Form>
+        <Form bg="danger">
           <Row>
-            <Col xs={2} className="d-flex justify-content-end white-text">
+            <Col xs={2} className="d-flex justify-content-end ">
               <Form.Label>Buscar un Pokemon:</Form.Label>
             </Col>
             <Col xs={10}>
@@ -49,7 +49,7 @@ function App() {
           </Row>
         </Form>
         <Row>
-          <div className="pokemon-container m-5">
+          <div className="pokemon-container m-5 justify-content-end">
             {pokemons.map((pokemon) => {
               return (
                 <Col key={pokemon.id}>
